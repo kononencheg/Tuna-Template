@@ -12,6 +12,14 @@ tuna.tmpl = {};
 
 
 /**
+ * Версия шаблонизатора.
+ *
+ * @type {string}
+ */
+tuna.tmpl.VERSION = '1.0.576';
+
+
+/**
  * @namespace Область имен классов компиляции шаблонов.
  */
 tuna.tmpl.compilers = {};
@@ -54,10 +62,29 @@ tuna.tmpl.units.condition = {};
 
 
 /**
+ * Создание шаблона из настроек в теге <code>tuna:template</code>.
+ *
+ * @param {!Node} element Элемент шаблона трансформации.
+ * @param {string} templateId Идентификатор настроек шаблона.
+ * @return {tuna.tmpl.units.Template} Созданный шаблон.
+ */
+tuna.tmpl.compileFromMarkup = function(element, templateId) {
+    var result = null;
+
+    var settings = tuna.tmpl.getTemplateSettingsById(templateId);
+    if (settings !== null) {
+        result = tuna.tmpl.compile(element, settings);
+    }
+
+    return result;
+};
+
+
+/**
  * Компилирование шаблона с настройками <code>settings</code> для элемента
  * <code>element</code>.
  *
- * @param {!Node} element Элемент шшаблона трансформации.
+ * @param {!Node} element Элемент шаблона трансформации.
  * @param {!tuna.tmpl.settings.TemplateSettings} settings Настройки шаблона.
  * @return {!tuna.tmpl.units.Template} Созданный шаблон.
  */

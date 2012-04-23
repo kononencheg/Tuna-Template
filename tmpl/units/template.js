@@ -142,7 +142,6 @@ tuna.tmpl.units.Template.prototype.applyData = function(dataNode) {
     }
 };
 
-
 /**
  * @inheritDoc
  */
@@ -152,4 +151,14 @@ tuna.tmpl.units.Template.prototype.destroy = function() {
     }
 
     this.__target = null;
+};
+
+
+/**
+ * Проведение трансформации данных в отображение.
+ *
+ * @param {!*} data Данные для отображения.
+ */
+tuna.tmpl.units.Template.prototype.processTransform = function(data) {
+    this.applyData(new tuna.tmpl.data.DataNode(data));
 };
