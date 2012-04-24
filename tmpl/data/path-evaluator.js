@@ -73,13 +73,10 @@ tuna.tmpl.data.PathEvaluator.prototype.__applyNextToken =
 tuna.tmpl.data.PathEvaluator.prototype.__applyToken =
     function(token, dataNode) {
 
-    switch (token) {
-        case '': return dataNode.getRoot();
-        case '.': return dataNode;
-        case '..': return dataNode.getParent();
-
-        case '$key': return dataNode.getKey();
-    }
+    if (token.length === 0) { return dataNode.getRoot(); }
+    if (token === '.') { return dataNode; }
+    if (token === '..') { return dataNode.getParent(); }
+    if (token === '$key') { return dataNode.getKey(); }
 
     return dataNode.growChild(token);
 };

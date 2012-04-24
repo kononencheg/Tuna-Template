@@ -106,16 +106,16 @@ tuna.tmpl.data.DataNode.prototype.getStringValue = function() {
  *         <code>tuna.tmpl.data.NULL_NODE</code> в случае неудачи.
  */
 tuna.tmpl.data.DataNode.prototype.growChild = function(key) {
-    if (this === tuna.tmpl.data.NULL_NODE) {
+    /*if (this === tuna.tmpl.data.NULL_NODE) {
         return this;
-    }
+    }*/
 
     if (this.__children[key] === undefined) {
-        if (this.__value !== null && this.__value[key] !== undefined) {
+        if (this.__value === null || this.__value[key] === undefined) {
+            this.__children[key] = tuna.tmpl.data.NULL_NODE;
+        } else {
             this.__children[key] =
                 new tuna.tmpl.data.DataNode(this.__value[key], this, key);
-        } else {
-            this.__children[key] = tuna.tmpl.data.NULL_NODE;
         }
     }
 

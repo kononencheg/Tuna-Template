@@ -12,14 +12,6 @@ tuna.tmpl = {};
 
 
 /**
- * Версия шаблонизатора.
- *
- * @type {string}
- */
-tuna.tmpl.VERSION = '1.0.576';
-
-
-/**
  * @namespace Область имен классов компиляции шаблонов.
  */
 tuna.tmpl.compilers = {};

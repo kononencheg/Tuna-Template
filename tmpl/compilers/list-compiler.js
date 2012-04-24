@@ -32,12 +32,13 @@ tuna.tmpl.compilers.ListCompiler.prototype.compile =
             renderer.removeAttribute('id');
 
             var selector = settings.targetSelector;
-            if (tuna.dom.matchesSelector(element, selector)) {
+            if (tuna.dom.hasClass(element, selector)) {
                 return this.__compileList(element, renderer, settings, root);
             } else {
                 var lists = [];
 
-                var elements = tuna.dom.select(selector, element);
+                var elements =
+                    tuna.dom.getElementsByClassName(selector, element);
 
                 var i = elements.length - 1;
                 while (i >= 0) {

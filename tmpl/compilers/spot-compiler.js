@@ -50,9 +50,9 @@ tuna.tmpl.compilers.SpotCompiler.prototype._setupSpot =
     }
 
     var selector = settings.targetSelector;
-    if (tuna.dom.matchesSelector(element, selector)) {
+    if (tuna.dom.hasClass(element, selector)) {
         spot.addTargets(element);
     } else {
-        spot.addTargets(tuna.dom.select(selector, element));
+        spot.addTargets(tuna.dom.getElementsByClassName(selector, element));
     }
 };
