@@ -58,13 +58,8 @@ tuna.tmpl.units.Attribute.prototype.setEvent = function(hasEvent) {
  * @inheritDoc
  */
 tuna.tmpl.units.Attribute.prototype._applyValue = function(value) {
-    var attr = null;
     if (value !== null) {
-        attr = value.toString();
-    }
-
-    if (attr !== null) {
-        this.__setAttribute(attr);
+        this.__setAttribute(value.toString());
     } else {
         this.__removeAttribute();
     }
@@ -86,8 +81,14 @@ tuna.tmpl.units.Attribute.prototype.__setAttribute = function(value) {
 
     var i = this._nodes.length - 1;
     while (i >= 0) {
-        if (this._nodes[i].getAttribute(name) !== value) {
-            this._nodes[i].setAttribute(name, value);
+        if (this._nodes[i][name] === undefined) {
+            if (this._nodes[i].getAttribute(name) !== value) {
+                this._nodes[i].setAttribute(name, value);
+            }
+        } else {
+            if (this._nodes[i][name] !== value) {
+                this._nodes[i][name] = value;
+            }
         }
 
         i--;
@@ -105,8 +106,14 @@ tuna.tmpl.units.Attribute.prototype.__removeAttribute = function() {
 
     var i = this._nodes.length - 1;
     while (i >= 0) {
-        if (this._nodes[i].getAttribute(name) !== null) {
-            this._nodes[i].removeAttribute(name);
+        if (this._nodes[i][name] === undefined) {
+            if (this._nodes[i].getAttribute(name) !== null) {
+                this._nodes[i].removeAttribute(name);
+            }
+        } else {
+            if (this._nodes[i][name] !== '') {
+                this._nodes[i][name] = '';
+            }
         }
 
         i--;
