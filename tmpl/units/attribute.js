@@ -77,21 +77,31 @@ tuna.tmpl.units.Attribute.prototype._applyValue = function(value) {
  * @param {string} value Значение аттрибута.
  */
 tuna.tmpl.units.Attribute.prototype.__setAttribute = function(value) {
-    var name = this.__attributeName;
-
     var i = this._nodes.length - 1;
-    while (i >= 0) {
-        if (this._nodes[i][name] === undefined) {
+
+    var name = this.__attributeName;
+    if (name === 'style') {
+        while (i >= 0) {
             if (this._nodes[i].getAttribute(name) !== value) {
                 this._nodes[i].setAttribute(name, value);
             }
-        } else {
-            if (this._nodes[i][name] !== value) {
-                this._nodes[i][name] = value;
-            }
-        }
 
-        i--;
+            i--;
+        }
+    } else {
+        while (i >= 0) {
+            if (this._nodes[i][name] === undefined) {
+                if (this._nodes[i].getAttribute(name) !== value) {
+                    this._nodes[i].setAttribute(name, value);
+                }
+            } else {
+                if (this._nodes[i][name] !== value) {
+                    this._nodes[i][name] = value;
+                }
+            }
+
+            i--;
+        }
     }
 };
 
