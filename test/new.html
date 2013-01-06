@@ -11,7 +11,7 @@
         <div style="display: none;">
 
             <ul>
-                <li id="item_renderer" class="t-switch">
+                <li id="item_renderer" class="t-row">
                     <img class="t-image" alt src />
                     <span class="t-name"></span>
                     <span class="t-name"></span>
@@ -25,6 +25,50 @@
         <script src="util.js"></script>
         <script src="tt.js"></script>
         <script>
+
+            var itemTemplate = {
+                'text@t-name:name': {},
+                'attr@t-image:name': [
+                    { 'name': 'alt' },
+                    { 'name': 'data-name' }
+                ],
+
+                'attr@t-image:imageUrl': { 'name': 'src' },
+                'case@t-row:$': {
+                    'cases': {
+                        '4': 'fifth'
+                    },
+
+                    'expressions': {
+                        '^\\d*[02468]$': 'even',
+                        '^\\d*[13579]$': 'odd',
+                        '.*': 'row'
+                    }
+                }
+            };
+
+            var listTemplate = {
+                'list@t-list:/': {
+                    'item-renderer-id': 'item_renderer',
+                    'item-template': {
+                        'text@t-name:name': {},
+                        'attr@t-image:name': [
+                            { 'name': 'alt' },
+                            { 'name': 'data-name' }
+                        ],
+
+                        'attr@t-image:imageUrl': { 'name': 'src' },
+                        'case@t-row:$': {
+                            'is-reg-exp': true,
+                            'cases': {
+                                '^\\d*[02468]$': 'even',
+                                '^\\d*[13579]$': 'odd',
+                                '.*': 'row'
+                            }
+                        }
+                    }
+                }
+            }
 
 
             var datas = [];
@@ -50,7 +94,7 @@
             var target = document.getElementById('list');
 
             var template = tt.rule.createTemplateRoot(target, [
-                new tt.rule.TemplateRule('list', 't-list', '', {
+                new tt.rule.TemplateRule('list', 't-list', '/', {
                     'item-renderer-id':'item_renderer',
                     'item-rules':[
                         new tt.rule.TemplateRule('text', 't-name', 'name', {}),
@@ -60,10 +104,8 @@
                         new tt.rule.TemplateRule('attr', 't-image', 'name', {
                             'name':'alt'
                         }),
-                        new tt.rule.TemplateRule('case', 't-switch', '$', {
-                            '/^\\d*[02468]$/': 'even',
-                            '"4"': 'five',
-                            '/.*/': 'item'
+                        new tt.rule.TemplateRule('case', 't-row', '$', {
+
                         })
                     ]
                 })
