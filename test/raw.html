@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body>
+
+        <div id="template">
+            <p class="t-text"></p>
+            <ol class="t-list"></ol>
+            <ol class="t-list"></ol>
+        </div>
+
+
+        <div style="display: none;">
+
+            <ol>
+                <li id="list_item" class="t-item"></li>
+            </ol>
+
+        </div>
+
+
+        <script src="util.js"></script>
+        <script src="tt.js"></script>
+        <script>
+
+
+          var data = {
+            'text': 'Hello Tuna Framework!',
+            'list': ['1', '2', '3', '4']
+          };
+
+          var target = document.getElementById('template');
+
+          var template = tt.rule.createTemplateRoot(target, [
+            new tt.rule.LeafRule('text', 't-text', '/text', {}),
+            new tt.rule.NodeRule('list', 't-list', '/list', {
+              'item-renderer-id': 'list_item',
+              'item-rules': [
+                new tt.rule.LeafRule('text', 't-item', '.', {})
+              ]
+            })
+          ]);
+
+          template.applyData(new tt.data.DataNode(data));
+        </script>
+
+    </body>
+</html>

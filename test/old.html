@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:tuna>
+    <head>
+        <title></title>
+    </head>
+    <body>
+
+    <ol id="list" class="t-list"></ol>
+
+    <div style="display: none;">
+        <tuna:template id="list_template">
+            <tuna:list tuna:target="t-list" tuna:path="" tuna:item-renderer-id="item_renderer"
+                       tuna:item-template-id="item_template" tuna:key-path="$key" />
+        </tuna:template>
+        <tuna:template id="item_template">
+            <tuna:spot tuna:target="t-name" tuna:path="name" />
+            <tuna:attr tuna:target="t-image" tuna:path="imageUrl" tuna:name="src" />
+            <tuna:attr tuna:target="t-image" tuna:path="name" tuna:name="alt" />
+        </tuna:template>
+
+        <ul>
+            <li id="item_renderer">
+                <img class="t-image" alt src />
+                <span class="t-name"></span>
+                <span class="t-name"></span>
+                <span class="t-name"></span>
+            </li>
+        </ul>
+    </div>
+
+    <script src="https://raw.github.com/kononencheg/Tuna-Framework/gh-pages/js/tuna-common.js"></script>
+    <script src="https://raw.github.com/kononencheg/Tuna-Framework/gh-pages/js/tuna-templates.js"></script>
+
+    <script>
+        var list = document.getElementById('list');
+        var template = tuna.tmpl.compileFromMarkup(list, 'list_template');
+        var datas = [];
+
+        var j = 0;
+        while (j < 1000) {
+            var i = 0;
+            var data = [];
+
+            while (i < 100) {
+                data.push({
+                    name:'Octocat_' + i + '_' + j,
+                    imageUrl:'https://a248.e.akamai.net/assets.github.com/images/modules/about_page/octocat.png'
+                });
+                i++;
+            }
+
+            datas.push(data);
+
+            j++;
+        }
+
+        var t = (new Date()).getTime();
+
+        j = 0;
+        while (j < 1000) {
+            template.processTransform(datas[j]);
+            j += 1;
+        }
+
+        alert((new Date()).getTime() - t);
+
+    </script>
+
+    </body>
+</html>

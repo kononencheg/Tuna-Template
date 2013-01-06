@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body>
+
+        <ol id="list" class="t-list"></ol>
+
+
+        <div style="display: none;">
+
+            <ul>
+                <li id="item_renderer" class="t-switch">
+                    <img class="t-image" alt src />
+                    <span class="t-name"></span>
+                    <span class="t-name"></span>
+                    <span class="t-name"></span>
+                </li>
+            </ul>
+
+        </div>
+
+
+        <script src="util.js"></script>
+        <script src="tt.js"></script>
+        <script>
+
+
+            var datas = [];
+
+            var j = 0;
+            while (j < 1000) {
+                var i = 0;
+                var data = [];
+
+                while (i < 100) {
+                    data.push({
+                        name:'Octocat_' + i + '_' + j,
+                        imageUrl:'https://a248.e.akamai.net/assets.github.com/images/modules/about_page/octocat.png'
+                    });
+                    i++;
+                }
+
+                datas.push(data);
+
+                j++;
+            }
+
+            var target = document.getElementById('list');
+
+            var template = tt.rule.createTemplateRoot(target, [
+                new tt.rule.TemplateRule('list', 't-list', '', {
+                    'item-renderer-id':'item_renderer',
+                    'item-rules':[
+                        new tt.rule.TemplateRule('text', 't-name', 'name', {}),
+                        new tt.rule.TemplateRule('attr', 't-image', 'imageUrl', {
+                            'name':'src'
+                        }),
+                        new tt.rule.TemplateRule('attr', 't-image', 'name', {
+                            'name':'alt'
+                        }),
+                        new tt.rule.TemplateRule('case', 't-switch', '$', {
+                            '/^\\d*[02468]$/': 'even',
+                            '"4"': 'five',
+                            '/.*/': 'item'
+                        })
+                    ]
+                })
+            ]);
+
+            var t = (new Date()).getTime();
+
+            j = 0;
+            while (j < 1000) {
+                template.applyData(new tt.data.DataNode(datas[j]));
+                j += 1;
+            }
+
+            alert((new Date()).getTime() - t + ' ');
+/*
+            console.profile('transform');
+
+            j = 0;
+            while (j < 1000) {
+                template.applyData(new tt.data.DataNode(datas[j]));
+                j += 1;
+            }
+
+            console.profileEnd('transform');*/
+
+        </script>
+
+    </body>
+</html>
