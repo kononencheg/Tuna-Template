@@ -26,36 +26,15 @@
         <script src="tt.js"></script>
         <script>
 
-            var itemTemplate = {
-                'text@t-name:name': {},
-                'attr@t-image:name': [
-                    { 'name': 'alt' },
-                    { 'name': 'data-name' }
-                ],
-
-                'attr@t-image:imageUrl': { 'name': 'src' },
-                'case@t-row:$': {
-                    'cases': {
-                        '4': 'fifth'
-                    },
-
-                    'expressions': {
-                        '^\\d*[02468]$': 'even',
-                        '^\\d*[13579]$': 'odd',
-                        '.*': 'row'
-                    }
-                }
-            };
-
-            var listTemplate = {
+            var templateTarget = document.getElementById('list');
+            var templateSign = {
                 'list@t-list:/': {
                     'item-renderer-id': 'item_renderer',
                     'item-template': {
                         'text@t-name:name': {},
-                        'attr@t-image:name': [
-                            { 'name': 'alt' },
-                            { 'name': 'data-name' }
-                        ],
+                        'attr@t-image:name': {
+                          'name': [ 'alt', 'data-name' ]
+                        },
 
                         'attr@t-image:imageUrl': { 'name': 'src' },
                         'case@t-row:$': {
@@ -68,7 +47,7 @@
                         }
                     }
                 }
-            }
+            };
 
 
             var datas = [];
@@ -81,7 +60,7 @@
                 while (i < 100) {
                     data.push({
                         name:'Octocat_' + i + '_' + j,
-                        imageUrl:'https://a248.e.akamai.net/assets.github.com/images/modules/about_page/octocat.png'
+                        imageUrl:'about: blank'
                     });
                     i++;
                 }
@@ -91,46 +70,29 @@
                 j++;
             }
 
-            var target = document.getElementById('list');
 
-            var template = tt.rule.createTemplateRoot(target, [
-                new tt.rule.TemplateRule('list', 't-list', '/', {
-                    'item-renderer-id':'item_renderer',
-                    'item-rules':[
-                        new tt.rule.TemplateRule('text', 't-name', 'name', {}),
-                        new tt.rule.TemplateRule('attr', 't-image', 'imageUrl', {
-                            'name':'src'
-                        }),
-                        new tt.rule.TemplateRule('attr', 't-image', 'name', {
-                            'name':'alt'
-                        }),
-                        new tt.rule.TemplateRule('case', 't-row', '$', {
 
-                        })
-                    ]
-                })
-            ]);
+            var template = tt.createTemplate(templateTarget, templateSign);
 
             var t = (new Date()).getTime();
 
             j = 0;
             while (j < 1000) {
-                template.applyData(new tt.data.DataNode(datas[j]));
+                template.processData(datas[j]);
                 j += 1;
             }
 
-            alert((new Date()).getTime() - t + ' ');
-/*
+            alert((new Date()).getTime() - t);
+
             console.profile('transform');
 
             j = 0;
             while (j < 1000) {
-                template.applyData(new tt.data.DataNode(datas[j]));
+                template.processData(datas[j]);
                 j += 1;
             }
 
-            console.profileEnd('transform');*/
-
+            console.profileEnd('transform');
         </script>
 
     </body>

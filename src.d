@@ -1,18 +1,18 @@
 
 lib/tt/tt.js
+lib/tt/template.js
 
-lib/tt/rule/template-rule.js
-lib/tt/rule/rule.js
+lib/tt/rules/rule.js
+lib/tt/rules/rules.js
 
 lib/tt/data/path-evaluator.js
 lib/tt/data/data-node.js
 lib/tt/data/data.js
 
-lib/tt/tmpl/i-template-item.js
-lib/tt/tmpl/template-item.js
-lib/tt/tmpl/root.js
-lib/tt/tmpl/node.js
-lib/tt/tmpl/leaf.js
+lib/tt/tree/i-template-node.js
+lib/tt/tree/template-root.js
+lib/tt/tree/template-node.js
+lib/tt/tree/tree.js
 
 lib/tt/view/i-template-view.js
 lib/tt/view/i-template-view-helper.js

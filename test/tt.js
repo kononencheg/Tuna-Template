@@ -75,46 +75,60 @@ if (typeof util === 'undefined' ||
 }
 'use strict';var tt = {};
 tt.VERSION = "0.1.0";
-tt.rule = {};
-tt.tmpl = {};
+tt.rules = {};
+tt.tree = {};
 tt.data = {};
 tt.view = {};
-tt.rule.TemplateRule = function(type, className, dataPath, options) {
+tt.createTemplate = function(target, sign) {
+  return new tt.Template(tt.tree.createTemplateRoot(target, tt.rules.createRules(sign)))
+};
+tt.Template = function(root) {
+  this.__root = root
+};
+tt.Template.prototype.getTarget = function() {
+  return this.__root.getTarget()
+};
+tt.Template.prototype.processData = function(data) {
+  this.__root.applyData(new tt.data.DataNode(data))
+};
+tt.rules.Rule = function(type, className, dataPath, options) {
   this.__type = type;
   this.__className = className;
   this.__pathEvaluator = new tt.data.PathEvaluator(dataPath);
-  this.__helper = tt.view.createViewHelper(type, options, this)
+  this.__helper = tt.view.createViewHelper(type, options)
 };
-tt.rule.TemplateRule.prototype.evaluateData = function(dataNode) {
+tt.rules.Rule.prototype.evaluateData = function(dataNode) {
   return this.__pathEvaluator.evaluate(dataNode)
 };
-tt.rule.TemplateRule.prototype.createTemplateItems = function(parent) {
+tt.rules.Rule.prototype.createTemplateNodes = function(parent) {
   var items = [];
   var elements = this.__findTemplateElements(parent);
   var i = 0, l = elements.length;
   while(i < l) {
     var view = tt.view.createView(this.__type, this.__helper);
     if(view !== null) {
-      items.push(new tt.tmpl.Node(elements[i], view, this))
+      items.push(new tt.tree.TemplateNode(elements[i], view, this))
     }
     i += 1
   }
   return items
 };
-tt.rule.TemplateRule.prototype.__findTemplateElements = function(parent) {
+tt.rules.Rule.prototype.__findTemplateElements = function(parent) {
   if(util.dom.hasClass(parent, this.__className)) {
     return[parent]
   }
   return util.dom.getElementsByClassName(this.__className, parent)
 };
-tt.rule.createTemplateRoot = function(element, rules) {
-  var items = [];
-  var i = 0, l = rules.length;
-  while(i < l) {
-    items = items.concat(rules[i].createTemplateItems(element));
-    i += 1
+tt.rules.createRules = function(sign) {
+  var rules = [];
+  for(var key in sign) {
+    var atIndex = key.indexOf("@");
+    var colonIndex = key.indexOf(":");
+    if(atIndex !== -1 && colonIndex !== -1 && colonIndex > atIndex) {
+      rules.push(new tt.rules.Rule(key.substring(0, atIndex), key.substring(atIndex + 1, colonIndex), key.substring(colonIndex + 1), sign[key]))
+    }
   }
-  return new tt.tmpl.Root(element, items)
+  return rules
 };
 tt.data.PathEvaluator = function(path) {
   this.__path = path.split("/")
@@ -123,14 +137,16 @@ tt.data.PathEvaluator.prototype.evaluate = function(node) {
   return this.__applyToken(node, 0)
 };
 tt.data.PathEvaluator.prototype.__applyToken = function(node, index) {
-  var token = this.__path[index];
-  if(token !== undefined && node.getValue() !== null) {
-    return this.__applyToken(this.__fetchNode(token, node), index + 1)
+  if(this.__path.length > index && node.getValue() !== null) {
+    return this.__applyToken(this.__fetchNode(this.__path[index], node), index + 1)
   }
   return node
 };
 tt.data.PathEvaluator.prototype.__fetchNode = function(token, node) {
-  if(token === "") {
+  if(token.length > 2) {
+    return node.growChild(token)
+  }
+  if(token.length === 0) {
     return node.getRoot()
   }
   if(token === "$") {
@@ -146,9 +162,8 @@ tt.data.PathEvaluator.prototype.__fetchNode = function(token, node) {
 };
 tt.data.DataNode = function(value, opt_parent, opt_key) {
   this.__value = value;
-  this.__stringValue = "";
   this.__parent = opt_parent || tt.data.NULL_NODE;
-  this.__key = opt_key || null;
+  this.__key = opt_key || "";
   this.__keyNode = null;
   this.__children = {}
 };
@@ -166,12 +181,6 @@ tt.data.DataNode.prototype.getRoot = function() {
 };
 tt.data.DataNode.prototype.getValue = function() {
   return this.__value
-};
-tt.data.DataNode.prototype.getStringValue = function() {
-  if(this.__value !== null && this.__stringValue === "") {
-    this.__stringValue = this.__value.toString()
-  }
-  return this.__stringValue
 };
 tt.data.DataNode.prototype.growChild = function(key) {
   if(this.__children[key] === undefined) {
@@ -208,50 +217,40 @@ tt.data.DataNode.prototype.growChildren = function() {
   }
 };
 tt.data.NULL_NODE = new tt.data.DataNode(null);
-tt.tmpl.ITemplateItem = function() {
+tt.tree.ITemplateNode = function() {
 };
-tt.tmpl.ITemplateItem.prototype.applyData = function(data) {
+tt.tree.ITemplateNode.prototype.applyData = function(data) {
 };
-tt.tmpl.TemplateItem = function(view, rule) {
-  this._view = view;
-  this._rule = rule
-};
-tt.tmpl.TemplateItem.prototype.applyData = function(data) {
-};
-tt.tmpl.Root = function(target, templateNodes) {
+tt.tree.TemplateRoot = function(target, templateNodes) {
   this.__target = target;
   this.__children = templateNodes
 };
-tt.tmpl.Root.prototype.applyData = function(dataNode) {
+tt.tree.TemplateRoot.prototype.applyData = function(dataNode) {
   var i = 0, l = this.__children.length;
   while(i < l) {
     this.__children[i].applyData(dataNode);
     i += 1
   }
 };
-tt.tmpl.Root.prototype.getTarget = function() {
+tt.tree.TemplateRoot.prototype.getTarget = function() {
   return this.__target
 };
-tt.tmpl.Node = function(target, view, rule) {
-  tt.tmpl.TemplateItem.call(this, view, rule);
-  this._target = target
+tt.tree.TemplateNode = function(target, view, rule) {
+  this.__view = view;
+  this.__rule = rule;
+  this.__target = target
 };
-util.inherits(tt.tmpl.Node, tt.tmpl.TemplateItem);
-tt.tmpl.Node.prototype.applyData = function(dataNode) {
-  this._view.applyTransformation(this._target, this._rule.evaluateData(dataNode))
+tt.tree.TemplateNode.prototype.applyData = function(dataNode) {
+  this.__view.applyTransformation(this.__target, this.__rule.evaluateData(dataNode))
 };
-tt.tmpl.Leaf = function(targets, view, rule) {
-  tt.tmpl.TemplateItem.call(this, view, rule);
-  this._targets = targets
-};
-util.inherits(tt.tmpl.Leaf, tt.tmpl.TemplateItem);
-tt.tmpl.Leaf.prototype.applyData = function(dataNode) {
-  var data = this._rule.evaluateData(dataNode);
-  var i = 0, l = this._targets.length;
+tt.tree.createTemplateRoot = function(element, rules) {
+  var items = [];
+  var i = 0, l = rules.length;
   while(i < l) {
-    this._view.applyTransformation(this._targets[i], data);
+    items = items.concat(rules[i].createTemplateNodes(element));
     i += 1
   }
+  return new tt.tree.TemplateRoot(element, items)
 };
 tt.view.ITemplateView = function() {
 };
@@ -274,12 +273,32 @@ tt.view.ListViewHelper.prototype.createItem = function(parent) {
   var target = this.__itemRenderer.cloneNode(true);
   if(target !== null) {
     parent.appendChild(target);
-    return tt.rule.createTemplateRoot(target, this.__itemRules)
+    return tt.tree.createTemplateRoot(target, this.__itemRules)
   }
   return null
 };
 tt.view.ListViewHelper.prototype.removeItem = function(parent, item) {
   parent.removeChild(item.getTarget())
+};
+tt.view.ListViewHelper.create = function(options) {
+  var itemRules = [];
+  var itemRenderer = null;
+  if(typeof options["item-renderer-id"] === "string") {
+    var itemRendererPrototype = document.getElementById(options["item-renderer-id"]);
+    if(itemRendererPrototype !== null) {
+      itemRenderer = itemRendererPrototype.cloneNode(true);
+      if(itemRenderer !== null) {
+        itemRenderer.removeAttribute("id")
+      }
+    }
+  }
+  if(options["item-template"] instanceof Object) {
+    itemRules = tt.rules.createRules(options["item-template"])
+  }
+  if(itemRenderer !== null) {
+    return new tt.view.ListViewHelper(itemRenderer, itemRules)
+  }
+  return null
 };
 tt.view.ListView = function(helper) {
   this.__helper = helper;
@@ -312,27 +331,45 @@ tt.view.ListView.prototype.applyTransformation = function(element, dataNode) {
   }
   this.__items = newItems
 };
-tt.view.AttributeViewHelper = function(name) {
-  this.__attributeName = name
+tt.view.AttributeViewHelper = function(names) {
+  this.__attributeNames = names
 };
 tt.view.AttributeViewHelper.prototype.setAttribute = function(element, value) {
-  var name = this.__attributeName;
-  if(element[name] === undefined || name === "style") {
-    element.setAttribute(name, value)
-  }else {
-    element[name] = value
+  var i = 0, l = this.__attributeNames.length;
+  while(i < l) {
+    var name = this.__attributeNames[i];
+    if(element[name] === undefined || name === "style") {
+      element.setAttribute(name, value)
+    }else {
+      element[name] = value
+    }
+    i += 1
   }
 };
 tt.view.AttributeViewHelper.prototype.removeAttribute = function(element) {
-  var name = this.__attributeName;
-  if(element[name] === undefined) {
-    element.removeAttribute(name)
-  }else {
-    element[name] = ""
+  var i = 0, l = this.__attributeNames.length;
+  while(i < l) {
+    var name = this.__attributeNames[i];
+    if(element[name] === undefined) {
+      element.removeAttribute(name)
+    }else {
+      element[name] = ""
+    }
+    i += 1
   }
 };
+tt.view.AttributeViewHelper.create = function(options) {
+  if(typeof options["name"] === "string") {
+    return new tt.view.AttributeViewHelper([options["name"]])
+  }else {
+    if(options["name"] instanceof Array) {
+      return new tt.view.AttributeViewHelper(util.toStringArray(options["name"]))
+    }
+  }
+  return null
+};
 tt.view.AttributeView = function(helper) {
-  this.__lastValue = undefined;
+  this.__lastValue = null;
   this.__helper = helper
 };
 tt.view.AttributeView.NAME = "attr";
@@ -371,6 +408,26 @@ tt.view.CaseViewHelper.prototype.apply = function(element, value) {
     i += 1
   }
 };
+tt.view.CaseViewHelper.create = function(options) {
+  var isRegExp = Boolean(options["is-reg-exp"]);
+  var cases = [];
+  var caseClasses = [];
+  var regExps = [];
+  var regExpClasses = [];
+  for(var key in options["cases"]) {
+    if(isRegExp) {
+      try {
+        regExps.push(new RegExp(key));
+        regExpClasses.push(options["cases"][key])
+      }catch(error) {
+      }
+    }else {
+      cases.push(key);
+      caseClasses.push(options["cases"][key])
+    }
+  }
+  return new tt.view.CaseViewHelper(cases, caseClasses, regExps, regExpClasses)
+};
 tt.view.CaseView = function(helper) {
   this.__helper = helper;
   this.__lastValue = undefined
@@ -408,35 +465,15 @@ tt.view.createView = function(type, helper) {
   }
   return null
 };
-tt.view.createViewHelper = function(type, data, rule) {
+tt.view.createViewHelper = function(type, data) {
   if(type === tt.view.ListView.NAME) {
-    var itemRules = [].concat(data["item-rules"]);
-    var itemRenderer = document.getElementById(String(data["item-renderer-id"]));
-    if(itemRenderer !== null) {
-      itemRenderer.removeAttribute("id");
-      return new tt.view.ListViewHelper(itemRenderer, itemRules)
-    }
+    return tt.view.ListViewHelper.create(data)
   }
   if(type === tt.view.AttributeView.NAME) {
-    return new tt.view.AttributeViewHelper(String(data["name"]))
+    return tt.view.AttributeViewHelper.create(data)
   }
   if(type === tt.view.CaseView.NAME) {
-    var cases = [];
-    var caseClasses = [];
-    var regExps = [];
-    var regExpClasses = [];
-    for(var key in data) {
-      if(key.charAt(0) === '"') {
-        cases.push(key.substr(1, key.length - 2));
-        caseClasses.push(data[key])
-      }else {
-        if(key.charAt(0) === "/") {
-          regExps.push(new RegExp(key.substr(1, key.length - 2)));
-          regExpClasses.push(data[key])
-        }
-      }
-    }
-    return new tt.view.CaseViewHelper(cases, caseClasses, regExps, regExpClasses)
+    return tt.view.CaseViewHelper.create(data)
   }
   return null
 };

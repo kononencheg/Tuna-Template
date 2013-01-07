@@ -5,7 +5,7 @@
 #
 
 JS_ROOT_DIR = ./
-JS_DEPS_DIRS = /home/kononencheg/Documents/Tuna-Utils/
+JS_DEPS_DIRS = /home/kononencheg/Documents/Tuna-Util/
 JS_DEFAULT_OUT = test/tt.js
 JS_DEFAULT_ENV = browser
 

@@ -14,10 +14,10 @@
  * * Names of contributors may be used to endorse or promote products
  * derived from this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL SERGEY KONONENKO BE LIABLE FOR ANY
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL SERGEY KONONENKO BE LIABLE FOR ANY
  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
  * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -25,6 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 
 
 if (typeof console !== 'object') {
@@ -66,7 +67,7 @@ if (typeof JSON.stringify !== 'function') {
 if (typeof JSON.parse !== 'function') {
   throw Error('"JSON.parse()" method must exists.');
 }
-var util = {};
+'use strict';var util = {};
 util.VERSION = "0.0.1";
 util.IS_IE = !!eval("'\v' == 'v'");
 util.dom = {};
@@ -78,16 +79,14 @@ util.inherits = function(Class, Parent) {
   Class.prototype.constructor = Class
 };
 util.bind = function(func, context) {
-  if(typeof func.bind === "function") {
-    return func.bind(context)
-  }else {
-    return function() {
-      return func.apply(context, util.toArray(arguments))
-    }
+  return function() {
+    return func.apply(context, arguments)
   }
 };
 util.async = function(callback) {
   setTimeout(callback, 0)
+};
+util.nop = function() {
 };
 util.clone = function(object) {
   try {
@@ -112,6 +111,15 @@ util.areEqual = function(first, second) {
 };
 util.toArray = function(list) {
   return Array.prototype.slice.call(list)
+};
+util.toStringArray = function(array) {
+  var i = 0, l = array.length;
+  var result = new Array(l);
+  while(i < l) {
+    result[i] = String(array[i]);
+    i += 1
+  }
+  return result
 };
 util.cloneArray = function(array) {
   return array.slice(0)
@@ -147,9 +155,9 @@ util.decodeJsonData = function(data) {
   return null
 };
 util.encodeFormData = function(object) {
-  return util.__splitUrlData(object).join("&")
+  return util.tokenizeUrlData(object).join("&")
 };
-util.__splitUrlData = function(object, opt_path) {
+util.tokenizeUrlData = function(object, opt_path) {
   var result = [];
   if(opt_path === undefined) {
     opt_path = []
@@ -157,7 +165,7 @@ util.__splitUrlData = function(object, opt_path) {
   if(typeof object === "object") {
     for(var key in object) {
       var newPath = opt_path.length === 0 ? [key] : (opt_path.join(",") + "," + key).split(",");
-      result = result.concat(util.__splitUrlData(object[key], newPath))
+      result = result.concat(util.tokenizeUrlData(object[key], newPath))
     }
   }else {
     result = [opt_path.shift() + (opt_path.length > 0 ? "[" + opt_path.join("][") + "]=" : "=") + encodeURIComponent(String(object))]
@@ -192,7 +200,7 @@ util.SafeObject.prototype.getCore = function() {
   return this.__core
 };
 util.SafeObject.prototype.get = function(var_keys) {
-  return this.getByPath(util.toArray(arguments))
+  return this.getByPath(Array.prototype.slice.call(arguments))
 };
 util.SafeObject.prototype.set = function(value, var_keys) {
   var path = Array.prototype.slice.call(arguments);
@@ -214,14 +222,14 @@ util.SafeObject.prototype.getByPath = function(path) {
     }
     i++
   }
-  return result === this.__core ? null : result
+  return result
 };
 util.SafeObject.prototype.setByPath = function(value, path) {
   var scope = this.__core;
   var i = 0, l = path.length;
   var key = null;
   while(i < l) {
-    key = path[i++];
+    key = path[i += 1];
     if(key === "") {
       key = 0;
       while(scope[key] !== undefined) {
