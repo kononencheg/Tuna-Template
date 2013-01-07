@@ -32,7 +32,7 @@
                     'item-renderer-id': 'item_renderer',
                     'item-template': {
                         'text@t-name:name': { 'pattern': 'Hello $$!' },
-                        'attr@t-image:name': { 'name': 'alt' },
+                        'attr@t-image:name': { 'name': [ 'alt', 'data-name' ], 'pattern': 'Hello $$!' },
                         'attr@t-image:imageUrl': { 'name': 'src' }/*,
                         'case@t-row:$': {
                             'is-reg-exp': true,
@@ -56,7 +56,7 @@
 
                 while (i < 100) {
                     data.push({
-                        name:'Octocat_'/* + i + '_' + j*/,
+                        name:'Octocat_' + i + '_' + j,
                         imageUrl:'https://a248.e.akamai.net/assets.github.com/images/modules/about_page/octocat.png'
                     });
 
