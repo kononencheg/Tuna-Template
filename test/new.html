@@ -8,6 +8,8 @@
         <ol id="list" class="t-list"></ol>
 
 
+
+
         <div style="display: none;">
 
             <ul>
@@ -32,11 +34,8 @@
                     'item-renderer-id': 'item_renderer',
                     'item-template': {
                         'text@t-name:name': {},
-                        'attr@t-image:name': {
-                          'name': [ 'alt', 'data-name' ]
-                        },
-
-                        'attr@t-image:imageUrl': { 'name': 'src' },
+                        'attr@t-image:name': { 'name': 'alt' },
+                        'attr@t-image:imageUrl': { 'name': 'src' }/*,
                         'case@t-row:$': {
                             'is-reg-exp': true,
                             'cases': {
@@ -44,11 +43,12 @@
                                 '^\\d*[13579]$': 'odd',
                                 '.*': 'row'
                             }
-                        }
+                        }*/
                     }
                 }
             };
 
+            var template = tt.createTemplate(templateTarget, templateSign);
 
             var datas = [];
 
@@ -57,11 +57,12 @@
                 var i = 0;
                 var data = [];
 
-                while (i < 100) {
+                while (i < 1000 - j) {
                     data.push({
                         name:'Octocat_' + i + '_' + j,
-                        imageUrl:'about: blank'
+                        imageUrl:'https://a248.e.akamai.net/assets.github.com/images/modules/about_page/octocat.png'
                     });
+
                     i++;
                 }
 
@@ -70,27 +71,17 @@
                 j++;
             }
 
-
-
-            var template = tt.createTemplate(templateTarget, templateSign);
-
-            var t = (new Date()).getTime();
-
-            j = 0;
-            while (j < 1000) {
-                template.processData(datas[j]);
-                j += 1;
-            }
-
-            alert((new Date()).getTime() - t);
-
             console.profile('transform');
 
+            //var t = (new Date()).getTime();
+
             j = 0;
             while (j < 1000) {
                 template.processData(datas[j]);
                 j += 1;
             }
+
+            //alert((new Date()).getTime() - t);
 
             console.profileEnd('transform');
         </script>

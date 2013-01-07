@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body>
+
+        <ol id="list" class="t-list"></ol>
+
+
+
+        <script>
+            var templateTarget = document.getElementById('list');
+
+
+
+            var htmls = [];
+
+            var j = 0;
+            while (j < 1000) {
+                var i = 0;
+                var html = '';
+
+                while (i < 1000 - j) {
+                    html +=
+                        '<li id="item_renderer" class="t-row">' +
+                          '<img class="t-image" alt="' + 'Octocat_' + i + '_' + j + '" src="' + 'https://a248.e.akamai.net/assets.github.com/images/modules/about_page/octocat.png' + '" />' +
+                          '<span class="t-name">' + 'Octocat_' + i + '_' + j + '</span>' +
+                          '<span class="t-name">' + 'Octocat_' + i + '_' + j + '</span>' +
+                          '<span class="t-name">' + 'Octocat_' + i + '_' + j + '</span>' +
+                        '</li>';
+
+                    i++;
+                }
+
+                htmls.push(html);
+
+                j++;
+            }
+
+            var t = (new Date()).getTime();
+
+            j = 0;
+            while (j < 1000) {
+                templateTarget.innerHTML = htmls[j];
+
+                j += 1;
+            }
+
+            alert((new Date()).getTime() - t);
+
+        </script>
+
+    </body>
+</html>
