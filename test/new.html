@@ -16,8 +16,6 @@
                 <li id="item_renderer" class="t-row">
                     <img class="t-image" alt src />
                     <span class="t-name"></span>
-                    <span class="t-name"></span>
-                    <span class="t-name"></span>
                 </li>
             </ul>
 
@@ -33,15 +31,14 @@
                 'list@t-list:/': {
                     'item-renderer-id': 'item_renderer',
                     'item-template': {
-                        'text@t-name:name': {},
+                        'text@t-name:name': { 'pattern': 'Hello $$!' },
                         'attr@t-image:name': { 'name': 'alt' },
                         'attr@t-image:imageUrl': { 'name': 'src' }/*,
                         'case@t-row:$': {
                             'is-reg-exp': true,
                             'cases': {
                                 '^\\d*[02468]$': 'even',
-                                '^\\d*[13579]$': 'odd',
-                                '.*': 'row'
+                                '^\\d*[13579]$': 'odd'
                             }
                         }*/
                     }
@@ -57,9 +54,9 @@
                 var i = 0;
                 var data = [];
 
-                while (i < 1000 - j) {
+                while (i < 100) {
                     data.push({
-                        name:'Octocat_' + i + '_' + j,
+                        name:'Octocat_'/* + i + '_' + j*/,
                         imageUrl:'https://a248.e.akamai.net/assets.github.com/images/modules/about_page/octocat.png'
                     });
 
@@ -71,9 +68,9 @@
                 j++;
             }
 
-            console.profile('transform');
+            //console.profile('transform');
 
-            //var t = (new Date()).getTime();
+            var t = (new Date()).getTime();
 
             j = 0;
             while (j < 1000) {
@@ -81,9 +78,9 @@
                 j += 1;
             }
 
-            //alert((new Date()).getTime() - t);
+            alert((new Date()).getTime() - t);
 
-            console.profileEnd('transform');
+            //console.profileEnd('transform');
         </script>
 
     </body>

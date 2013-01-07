@@ -14,13 +14,14 @@ lib/tt/tree/template-root.js
 lib/tt/tree/template-node.js
 lib/tt/tree/tree.js
 
+lib/tt/view/helpers/i-template-view-helper.js
+lib/tt/view/helpers/simple-view-helper.js
+lib/tt/view/helpers/case-view-helper.js
+lib/tt/view/helpers/text-view-helper.js
+lib/tt/view/helpers/attribute-view-helper.js
+lib/tt/view/helpers/list-view-helper.js
+
 lib/tt/view/i-template-view.js
-lib/tt/view/i-template-view-helper.js
-lib/tt/view/list-view-helper.js
+lib/tt/view/simple-view.js
 lib/tt/view/list-view.js
-lib/tt/view/attribute-view-helper.js
-lib/tt/view/attribute-view.js
-lib/tt/view/case-view-helper.js
-lib/tt/view/case-view.js
-lib/tt/view/text-view.js
 lib/tt/view/view.js
