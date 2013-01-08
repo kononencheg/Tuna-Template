@@ -11,7 +11,7 @@
 
 
         <div style="display: none;">
-
+            &amp;
             <ul>
                 <li id="item_renderer" class="t-row">
                     <img class="t-image" alt src />
@@ -31,8 +31,8 @@
                 'list@t-list:/': {
                     'item-renderer-id': 'item_renderer',
                     'item-template': {
-                        'text@t-name:name': { 'pattern': 'Hello $$!' },
-                        'attr@t-image:name': { 'name': [ 'alt', 'data-name' ], 'pattern': 'Hello $$!' },
+                        'text@t-name:name': { /*'pattern': 'Hello $$!' */},
+                        'attr@t-image:name': { 'name': 'alt'/*, 'pattern': 'Hello $$!'*/ },
                         'attr@t-image:imageUrl': { 'name': 'src' }/*,
                         'case@t-row:$': {
                             'is-reg-exp': true,
