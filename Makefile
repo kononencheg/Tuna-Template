@@ -1,3 +1,4 @@
+JS_BUILD_HOME ?= /usr/lib/js-build-tools
 
 
 #
@@ -5,23 +6,22 @@
 #
 
 JS_ROOT_DIR = ./
-JS_DEPS_DIRS = /home/kononencheg/Documents/Tuna-Util/
-JS_DEFAULT_OUT = test/tt.js
 JS_DEFAULT_ENV = browser
+JS_DEPS_DIRS = ../util/
 
-include build/js-variables.mk
+MODULE_NAME = tt
 
+include $(JS_BUILD_HOME)/js-variables.mk
 
 
 #
 #	Rules
 #
 
-all : js-export
+all : js-externs js-export
 
-test : js-test-lint js-test-compile
+check : js-test-lint js-test-compile
 
 clean : js-clean
 
-
-include build/js-rules.mk
+include $(JS_BUILD_HOME)/js-rules.mk
