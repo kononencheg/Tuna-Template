@@ -122,13 +122,19 @@ tt.Template.prototype.getTarget = function() {};
 
 /**
  * @param {*} data Данные для отображения.
+ * @param {!Array.<!Node>=} opt_createdNodes Созданные DOM-элеметны.
+ * @param {!Array.<!Node>=} opt_removedNodes Удаленные DOM-элеметны.
  */
-tt.Template.prototype.processData = function(data) {};
+tt.Template.prototype.processData =
+    function(data, opt_createdNodes, opt_removedNodes) {};
 
 /**
  * @param {!tt.data.DataNode} dataNode Узел данных.
+ * @param {!Array.<!Node>=} opt_createdNodes Созданные DOM-элеметны.
+ * @param {!Array.<!Node>=} opt_removedNodes Удаленные DOM-элеметны.
  */
-tt.Template.prototype.applyData = function(dataNode) {};
+tt.Template.prototype.applyData =
+    function(dataNode, opt_createdNodes, opt_removedNodes) {};
 
 /**
  * TUNA FRAMEWORK
@@ -167,8 +173,11 @@ tt.TemplateUnit = function(view, pathEvaluator) {};
 
 /**
  * @param {!tt.data.DataNode} dataNode Узел данных.
+ * @param {!Array.<!Node>=} opt_createdNodes Созданные DOM-элеметны.
+ * @param {!Array.<!Node>=} opt_removedNodes Удаленные DOM-элеметны.
  */
-tt.TemplateUnit.prototype.applyData = function(dataNode) {};
+tt.TemplateUnit.prototype.applyData =
+    function(dataNode, opt_createdNodes, opt_removedNodes) {};
 
 /**
  * TUNA FRAMEWORK
@@ -651,8 +660,11 @@ tt.view.ITemplateView = function() {};
 
 /**
  * @param {!tt.data.DataNode} dataNode Узел дерева данных.
+ * @param {!Array.<!Node>=} opt_createdNodes Созданные DOM-элеметны.
+ * @param {!Array.<!Node>=} opt_removedNodes Удаленные DOM-элеметны.
  */
-tt.view.ITemplateView.prototype.applyTransformation = function(dataNode) {};
+tt.view.ITemplateView.prototype.applyTransformation =
+    function(dataNode, opt_createdNodes, opt_removedNodes) {};
 
 /**
  * TUNA FRAMEWORK
@@ -735,7 +747,8 @@ tt.view.ListView = function(target, helper) {};
 /**
  * @inheritDoc
  */
-tt.view.ListView.prototype.applyTransformation = function(dataNode) {};
+tt.view.ListView.prototype.applyTransformation =
+    function(dataNode, opt_createdNodes, opt_removedNodes) {};
 
 /**
  * TUNA FRAMEWORK
