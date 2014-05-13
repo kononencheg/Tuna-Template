@@ -1,2 +1,6 @@
+*.iml
+*.log
+.project
 .idea/
-bin/*.o
+bin/
+externs/
